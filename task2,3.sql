@@ -2,8 +2,7 @@
 
 select title, duration
 from tracks
-order by duration DESC
-limit 1;
+where duration = (select max(duration) from tracks);
 
 select title, duration
 from tracks
@@ -11,7 +10,7 @@ where duration >= '00:03:50';
 
 select title, releasyyear
 from compilations
-where releasyyear >= 2018 and releasyyear <= 2020;
+where releasyyear between 2018 and 2020;
 
 select name
 from artists
@@ -38,10 +37,14 @@ from albums
 join tracks on tracks.albumid = albums.albumid
 group by albums.title;
 
-select artists.name
+select name
 from artists
-LEFT join artists_albums on artists.artistID = artists_albums.artistID
-LEFT JOIN albums ON artists_albums.AlbumID = albums.AlbumID AND albums.ReleaseYear = 2020;
+where artistID not in (
+select distinct artists.artistid
+from artists
+join artists_albums on artists.artistID = artists_albums.artistID
+join albums on artists_albums.AlbumID = albums.AlbumID
+where albums.ReleaseYear = 2020);
 
 select compilations.title
 from artists
